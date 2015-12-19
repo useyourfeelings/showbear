@@ -7,6 +7,8 @@ class Model
 {
 private:
     unsigned int vaoHandle;
+    unsigned int element_array_buffer_triangles;
+    unsigned int element_array_buffer_triangles_adjacency;
     int faces_;
     int vertices_;
 
@@ -20,4 +22,5 @@ public:
     bool AssimpImport(const std::string& pFile);
 
     void Render() const;
+    void RenderAsTrianglesAdj() const;
 };
