@@ -32,7 +32,7 @@ if(MSVC)
 
     add_custom_command(TARGET ${DEMO_NAME} PRE_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/source/demos/${DEMO_NAME}/data)
     # vs2015 work dir is $(ProjectDir) by default
-    add_custom_command(TARGET ${DEMO_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/bin/data ${CMAKE_BINARY_DIR}/source/demos/${DEMO_NAME}/data)
+    add_custom_command(TARGET ${DEMO_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/source/data ${CMAKE_BINARY_DIR}/source/demos/${DEMO_NAME}/data)
 else()
     target_link_libraries(${DEMO_NAME} ${CMAKE_BINARY_DIR}/source/lib/libshowbear.a)
     target_link_libraries(${DEMO_NAME} ${CMAKE_BINARY_DIR}/source/thirdparty/glad/libglad.a)
