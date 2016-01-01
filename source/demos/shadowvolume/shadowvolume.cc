@@ -41,21 +41,21 @@ void CompileAndLinkShader()
 	try
 	{
 	    // for pass1
-    	scene_prog.compileShader("../source/data/shaders/sv_scene.vs");
-    	scene_prog.compileShader("../source/data/shaders/sv_scene.fs");
+    	scene_prog.compileShader("data/shaders/sv_scene.vs");
+    	scene_prog.compileShader("data/shaders/sv_scene.fs");
     	scene_prog.link();
     	scene_prog.validate();
 
     	// for pass2
-    	volume_prog.compileShader("../source/data/shaders/sv_volume.vs");
-    	volume_prog.compileShader("../source/data/shaders/sv_volume.fs");
-    	volume_prog.compileShader("../source/data/shaders/sv_volume.gs");
+    	volume_prog.compileShader("data/shaders/sv_volume.vs");
+    	volume_prog.compileShader("data/shaders/sv_volume.fs");
+    	volume_prog.compileShader("data/shaders/sv_volume.gs");
     	volume_prog.link();
     	volume_prog.validate();
 
     	// for pass3
-    	shadow_prog.compileShader("../source/data/shaders/sv_shadow.vs");
-    	shadow_prog.compileShader("../source/data/shaders/sv_shadow.fs");
+    	shadow_prog.compileShader("data/shaders/sv_shadow.vs");
+    	shadow_prog.compileShader("data/shaders/sv_shadow.fs");
     	shadow_prog.link();
     	shadow_prog.validate();
     }
@@ -73,6 +73,8 @@ int Clear()
     delete plane;
     delete cube;
     delete sphere;
+
+    return 0;
 }
 
 int SetupFBO()
@@ -119,17 +121,19 @@ int SetupFBO()
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+    return 0;
 }
 
 int InitScene()
 {
     CompileAndLinkShader();
 
-    vase = new Model("../source/data/models/vase.dae");
-    torus = new Model("../source/data/models/torus.dae");
-    plane = new Model("../source/data/models/plane.dae");
-    cube = new Model("../source/data/models/cube.dae");
-    sphere = new Model("../source/data/models/sphere.dae");
+    vase = new Model("data/models/vase.dae");
+    torus = new Model("data/models/torus.dae");
+    plane = new Model("data/models/plane.dae");
+    cube = new Model("data/models/cube.dae");
+    sphere = new Model("data/models/sphere.dae");
 
     eye = vec3(2.0f, 8.0f, 12.0f);
     look = vec3(0.0f, 0.0f, 0.0f);
@@ -156,6 +160,8 @@ int InitScene()
     glEnableVertexAttribArray(0);  // Vertex position
 
     glBindVertexArray(0);
+
+    return 0;
 }
 
 void SetMatrices(GLSLProgram &prog)
@@ -246,6 +252,8 @@ int DrawScene(GLSLProgram &prog, bool isVolumePass)
         plane->Render();
     }
 #endif
+
+    return 0;
 }
 
 int Pass1()
@@ -267,6 +275,8 @@ int Pass1()
     scene_prog.setUniform("light.intensity", vec3(0.85f));
     scene_prog.setUniform("light.position", view * vec4(light_eye, 1.0f));
     DrawScene(scene_prog, false);
+
+    return 0;
 }
 
 int Pass2()
@@ -316,6 +326,8 @@ int Pass2()
     DrawScene(volume_prog, true);
 
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    return 0;
 }
 
 int Pass3()
@@ -339,6 +351,8 @@ int Pass3()
     //projection = glm::infinitePerspective(glm::radians(90.0f), (float)width / height, 0.5f);
     projection = glm::perspective(glm::radians(90.0f), (float)width / height, 1.f, 400.0f);
     glDisable(GL_BLEND);
+
+    return 0;
 }
 
 int Render()
@@ -346,6 +360,8 @@ int Render()
     Pass1();
     Pass2();
     Pass3();
+
+    return 0;
 }
 
 int Update(float time)
@@ -366,6 +382,8 @@ int Update(float time)
 
         angle += delta_angle;
     }
+
+    return 0;
 }
 
 int Resize(int w, int h)
@@ -376,6 +394,8 @@ int Resize(int w, int h)
 
     projection = glm::perspective(glm::radians(90.0f), (float)width / height, 1.f, 400.0f);
     //projection = glm::infinitePerspective(glm::radians(90.0f), (float)width / height, 0.5f);
+
+    return 0;
 }
 
 int DoImgui()
@@ -406,6 +426,8 @@ int DoImgui()
     }
     if(ImGui::IsKeyPressed(GLFW_KEY_V))
         show_volume = 1 - show_volume;
+
+    return 0;
 }
 
 ///////////////////////////

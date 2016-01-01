@@ -5,7 +5,10 @@ message(STATUS cmake-showbear)
 # Set minimum version
 cmake_minimum_required (VERSION 2.8)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+if(MSVC)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 if( WIN32 )
     message(STATUS cmake-WIN32)

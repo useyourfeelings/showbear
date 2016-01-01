@@ -41,8 +41,8 @@ void CompileAndLinkShader()
 {
 	try
 	{
-    	prog.compileShader("../source/data/shaders/shadowmap.vs");
-    	prog.compileShader("../source/data/shaders/shadowmap.fs");
+    	prog.compileShader("data/shaders/shadowmap.vs");
+    	prog.compileShader("data/shaders/shadowmap.fs");
     	prog.link();
     	prog.validate();
     	prog.use();
@@ -59,6 +59,8 @@ int Clear()
     delete man;
     delete torus;
     delete plane;
+
+    return 0;
 }
 
 int SetupFBO()
@@ -86,11 +88,13 @@ int SetupFBO()
 
     GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if(result == GL_FRAMEBUFFER_COMPLETE)
-        printf("Framebuffer is complete.\n");
+        cout<<"Framebuffer is complete.\n";
     else
-        printf("Framebuffer is not complete.\n");
+        cout<<"Framebuffer is not complete.\n";
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return 0;
 }
 
 int InitScene()
@@ -98,14 +102,14 @@ int InitScene()
     CompileAndLinkShader();
     glEnable(GL_DEPTH_TEST);
 
-    man = new Model("../source/data/models/man.dae");
-    torus = new Model("../source/data/models/torus.dae");
-    plane = new Model("../source/data/models/plane.dae");
+    man = new Model("data/models/man.dae");
+    torus = new Model("data/models/torus.dae");
+    plane = new Model("data/models/plane.dae");
 
     prog.setUniform("light.intensity", vec3(0.85f));
     prog.setUniform("pcf", pcf);
 
-    eye = vec3(5.0f, 6.0f, 12.0f);
+    eye = vec3(2.0f, 6.0f, 12.0f);
     look = vec3(0.0f, 0.0f, 0.0f);
     up = vec3(0.0f, 1.0f, 0.0f);
 
@@ -113,7 +117,7 @@ int InitScene()
     light_look = vec3(0.0f,0.0f,0.0f);
     light_up = vec3(0.0f,1.0f,0.0f);
 
-    shadow_bias = mat4( vec4(0.5f,0.0f,0.0f,0.0f),
+    shadow_bias = mat4(vec4(0.5f,0.0f,0.0f,0.0f),
                         vec4(0.0f,0.5f,0.0f,0.0f),
                         vec4(0.0f,0.0f,0.5f,0.0f),
                         vec4(0.5f,0.5f,0.5f,1.0f));
@@ -123,6 +127,8 @@ int InitScene()
     GLuint programHandle = prog.getHandle();
     render_nothing_routine = glGetSubroutineIndex(programHandle, GL_FRAGMENT_SHADER, "RenderNothing");
     render_with_shadow_routine = glGetSubroutineIndex(programHandle, GL_FRAGMENT_SHADER, "RenderWithShadow");
+
+    return 0;
 }
 
 void SetMatrices()
@@ -159,6 +165,8 @@ int DrawScene()
     prog.setUniform("material.ks", 0.2f, 0.2f, 0.2f);
     prog.setUniform("material.shininess", 55.0f);
     plane->Render();
+
+    return 0;
 }
 
 int Pass1()
@@ -173,6 +181,8 @@ int Pass1()
     glUniformSubroutinesuiv(GL_FRAGMENT_SHADER, 1, &render_nothing_routine);
     DrawScene();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return 0;
 }
 
 int Pass2()
@@ -186,12 +196,16 @@ int Pass2()
     glEnable(GL_POLYGON_OFFSET_FILL); // z-fight
     glPolygonOffset(2.0f, 2.0f);
     DrawScene();
+
+    return 0;
 }
 
 int Render()
 {
     Pass1();
     Pass2();
+
+    return 0;
 }
 
 int Update(float time)
@@ -212,6 +226,8 @@ int Update(float time)
 
         angle += delta_angle;
     }
+
+    return 0;
 }
 
 int Resize(int w, int h)
@@ -221,6 +237,8 @@ int Resize(int w, int h)
     height = h;
 
     projection = glm::perspective(glm::radians(90.0f), (float)width / height, 1.f, 400.0f);
+
+    return 0;
 }
 
 int DoImgui()
@@ -246,6 +264,8 @@ int DoImgui()
         pcf = 1 - pcf;
         prog.setUniform("pcf", pcf);
     }
+
+    return 0;
 }
 
 ///////////////////////////

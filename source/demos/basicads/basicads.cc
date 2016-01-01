@@ -11,6 +11,7 @@ using namespace std;
 #include <glslprogram.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 int width = 800;
 int height = 600;
@@ -21,6 +22,7 @@ Model *plane = nullptr;
 float lastTime;
 float angle;
 int rotating = 1;
+int foggy = 1;
 
 glm::mat4 model, view, projection;
 
@@ -33,8 +35,8 @@ void CompileAndLinkShader()
 {
 	try
 	{
-    	prog.compileShader("../source/data/shaders/basicads.vs");
-    	prog.compileShader("../source/data/shaders/basicads.fs");
+    	prog.compileShader("data/shaders/basicads.vs");
+    	prog.compileShader("data/shaders/basicads.fs");
     	prog.link();
     	prog.validate();
     	prog.use();
@@ -51,6 +53,8 @@ int Clear()
     delete man;
     delete torus;
     delete plane;
+
+    return 0;
 }
 
 int InitScene()
@@ -58,11 +62,15 @@ int InitScene()
     CompileAndLinkShader();
     glEnable(GL_DEPTH_TEST);
 
-    man = new Model("../source/data/models/man.dae");
-    torus = new Model("../source/data/models/torus.dae");
-    plane = new Model("../source/data/models/plane.dae");
+    man = new Model("data/models/vase.dae");
+    torus = new Model("data/models/torus.dae");
+    plane = new Model("data/models/plane.dae");
 
     prog.setUniform("light.intensity", vec3(0.85f));
+    prog.setUniform("fog.color", vec3(0.7, 0.7, 0.6));
+    prog.setUniform("fog.max_dist", 40.0f);
+    prog.setUniform("fog.min_dist", 0.0f);
+    prog.setUniform("foggy", bool(foggy));
 
     // eye parameters
     eye = vec3(8.0f, 6.0f, 10.0f);
@@ -74,7 +82,9 @@ int InitScene()
     light_look = vec3(0.0f,0.0f,0.0f);
     light_up = vec3(0.0f,1.0f,0.0f);
 
-    prog.setUniform("light.position", glm::lookAt(light_eye, light_look, light_up) * vec4(light_eye, 1.0f));
+    prog.setUniform("light.position", glm::lookAt(eye, look, up) * vec4(light_eye, 1.0f));
+
+    return 0;
 }
 
 void SetMatrices()
@@ -90,7 +100,6 @@ int DrawScene()
 {
     // draw man
     model = mat4(1.0f);
-    model = glm::rotate(glm::radians(angle), glm::vec3(0.f, 1.f, 0.f)) * model;
     SetMatrices();
     prog.setUniform("material.kd", 0.4f, 0.2f, 0.7f);
     prog.setUniform("material.ka", 0.4f, 0.3f, 0.6f);
@@ -99,7 +108,7 @@ int DrawScene()
     man->Render();
 
     // draw torus
-    model = glm::translate(vec3(6.f, 3.f, 0.f));
+    model = glm::translate(vec3(8.f, 3.f, 0.f));
     model = glm::rotate(glm::radians(-angle), glm::vec3(0.f, 1.f, 0.f)) * model;
     SetMatrices();
     prog.setUniform("material.kd", 0.9f, 0.2f, 0.2f);
@@ -116,6 +125,8 @@ int DrawScene()
     prog.setUniform("material.ks", 0.2f, 0.2f, 0.2f);
     prog.setUniform("material.shininess", 55.0f);
     plane->Render();
+
+    return 0;
 }
 
 int Render()
@@ -126,6 +137,8 @@ int Render()
     //glCullFace(GL_BACK);
     view = glm::lookAt(eye, look, up);
     DrawScene();
+
+    return 0;
 }
 
 int Update(float time)
@@ -145,6 +158,8 @@ int Update(float time)
         delta_angle = delta_t * 60;
         angle += delta_angle;
     }
+
+    return 0;
 }
 
 int Resize(int w, int h)
@@ -154,6 +169,8 @@ int Resize(int w, int h)
     height = h;
 
     projection = glm::perspective(glm::radians(90.0f), (float)width / height, 1.f, 400.0f);
+
+    return 0;
 }
 
 int DoImgui()
@@ -165,7 +182,7 @@ int DoImgui()
     {
         ImGui::End();
     }
-    ImGui::Text("space : toggle rotation\nesc : exit");
+    ImGui::Text("esc:exit\nspace:toggle rotation\nf:toggle fog rendering");
     ImGui::End();
 
     ImGui::Render();
@@ -174,6 +191,13 @@ int DoImgui()
         rotating = 1 - rotating;
     if(ImGui::IsKeyPressed(GLFW_KEY_ESCAPE))
         glfwSetWindowShouldClose(window, GL_TRUE);
+    if(ImGui::IsKeyPressed(GLFW_KEY_F))
+    {
+        foggy = 1 - foggy;
+        prog.setUniform("foggy", bool(foggy));
+    }
+
+    return 0;
 }
 
 ///////////////////////////

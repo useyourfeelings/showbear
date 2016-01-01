@@ -33,8 +33,8 @@ void CompileAndLinkShader()
 {
 	try
 	{
-    	prog.compileShader("../source/data/shaders/stenciltest.vs");
-    	prog.compileShader("../source/data/shaders/stenciltest.fs");
+    	prog.compileShader("data/shaders/stenciltest.vs");
+    	prog.compileShader("data/shaders/stenciltest.fs");
     	prog.link();
     	prog.validate();
     	prog.use();
@@ -50,6 +50,8 @@ int Clear()
     delete man;
     delete torus;
     delete plane;
+
+    return 0;
 }
 
 int InitScene()
@@ -58,9 +60,9 @@ int InitScene()
     glEnable(GL_DEPTH_TEST);
 
 
-    man = new Model("../source/data/models/man.dae");
-    torus = new Model("../source/data/models/torus.dae");
-    plane = new Model("../source/data/models/plane.dae");
+    man = new Model("data/models/man.dae");
+    torus = new Model("data/models/torus.dae");
+    plane = new Model("data/models/plane.dae");
 
     prog.setUniform("light.intensity", vec3(0.85f));
 
@@ -73,6 +75,8 @@ int InitScene()
     light_up = vec3(0.0f,1.0f,0.0f);
 
     glClearStencil(0);
+
+    return 0;
 }
 
 void SetMatrices()
@@ -131,6 +135,8 @@ int DrawScene()
     prog.setUniform("material.shininess", 55.0f);
     plane->Render();
 #endif
+
+    return 0;
 }
 
 int Render()
@@ -140,6 +146,8 @@ int Render()
     glCullFace(GL_BACK);
     view = glm::lookAt(eye, look, up);
     DrawScene();
+
+    return 0;
 }
 
 int Update(float time)
@@ -159,6 +167,8 @@ int Update(float time)
         delta_angle = delta_t * 90;
         angle += delta_angle;
     }
+
+    return 0;
 }
 
 int Resize(int w, int h)
@@ -168,6 +178,8 @@ int Resize(int w, int h)
     height = h;
 
     projection = glm::perspective(glm::radians(90.0f), (float)width / height, 1.f, 400.0f);
+
+    return 0;
 }
 
 int DoImgui()
@@ -188,6 +200,8 @@ int DoImgui()
         rotating = 1 - rotating;
     if(ImGui::IsKeyPressed(GLFW_KEY_ESCAPE))
         glfwSetWindowShouldClose(window, GL_TRUE);
+
+    return 0;
 }
 
 ///////////////////////////
